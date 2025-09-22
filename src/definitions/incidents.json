@@ -1,0 +1,229 @@
+{
+  "layout": "splitscreen",
+  "views": {
+    "list": {
+      "tag": "view",
+      "name": "list",
+      "children": [
+        {
+          "tag": "group",
+          "class": "filters mb-4",
+          "children": [
+            {
+              "tag": "select",
+              "name": "city",
+              "bind": "state.filters.city",
+              "placeholder": "All Cities",
+              "options": {"$bind": "state.cities"}
+            },
+            {
+              "tag": "select", 
+              "name": "severity",
+              "bind": "state.filters.severity",
+              "placeholder": "All Severities",
+              "multiple": true,
+              "options": {"$bind": "state.severities"}
+            },
+            {
+              "tag": "input",
+              "name": "dateRange",
+              "bind": "state.filters.dateRange", 
+              "placeholder": "Date range",
+              "type": "date"
+            }
+          ]
+        },
+        {
+          "tag": "group",
+          "class": "kpis mb-6",
+          "children": [
+            {
+              "tag": "card",
+              "title": "Total",
+              "value": {"$bind": "state.kpis.total"},
+              "class": "kpi-card"
+            },
+            {
+              "tag": "card",
+              "title": "Open", 
+              "value": {"$bind": "state.kpis.open"},
+              "class": "kpi-card status-open"
+            },
+            {
+              "tag": "card",
+              "title": "Acknowledged",
+              "value": {"$bind": "state.kpis.acknowledged"},
+              "class": "kpi-card status-ack"
+            },
+            {
+              "tag": "card",
+              "title": "SLA Breached",
+              "value": {"$bind": "state.kpis.slaBreached"},
+              "class": "kpi-card status-breach"
+            }
+          ]
+        },
+        {
+          "tag": "table",
+          "bind": "state.filteredIncidents",
+          "virtualized": true,
+          "onRowClick": {"action": "showDetail", "id": "{{row.id}}"},
+          "columns": [
+            {"key": "id", "title": "ID", "width": 120},
+            {"key": "title", "title": "Title", "width": 300}, 
+            {"key": "city", "title": "City", "width": 120},
+            {"key": "severity", "title": "Severity", "width": 120},
+            {"key": "status", "title": "Status", "width": 120}
+          ]
+        }
+      ]
+    },
+    
+    "detail": {
+      "tag": "view",
+      "name": "detail", 
+      "children": [
+        {
+          "tag": "group",
+          "class": "header mb-4",
+          "children": [
+            {
+              "tag": "h1",
+              "content": "Incident #{{state.currentIncident.id}}"
+            },
+            {
+              "tag": "button",
+              "text": "× Close",
+              "onClick": {"action": "showEmpty"}
+            }
+          ]
+        },
+        {
+          "tag": "group",
+          "class": "details mb-6",
+          "children": [
+            {
+              "tag": "text",
+              "label": "Title",
+              "content": {"$bind": "state.currentIncident.title"}
+            },
+            {
+              "tag": "text",
+              "label": "Status", 
+              "content": {"$bind": "state.currentIncident.status"}
+            },
+            {
+              "tag": "text",
+              "label": "City",
+              "content": {"$bind": "state.currentIncident.city"}
+            },
+            {
+              "tag": "text",
+              "label": "Severity",
+              "content": {"$bind": "state.currentIncident.severity"}
+            },
+            {
+              "tag": "text",
+              "label": "Description", 
+              "content": {"$bind": "state.currentIncident.description"}
+            }
+          ]
+        },
+        {
+          "tag": "group",
+          "class": "actions",
+          "children": [
+            {
+              "tag": "button",
+              "text": "Acknowledge",
+              "variant": "primary",
+              "visibleWhen": {"eq": [{"$bind": "state.currentIncident.status"}, "open"]},
+              "onClick": {
+                "action": "publish", 
+                "topic": "commands.incident.acknowledge",
+                "payload": {"id": {"$bind": "state.currentIncident.id"}}
+              }
+            },
+            {
+              "tag": "button",
+              "text": "Edit",
+              "variant": "secondary", 
+              "onClick": {"action": "modal", "modal": "edit-form"}
+            }
+          ]
+        },
+        {
+          "tag": "modal",
+          "name": "edit-form",
+          "title": "Edit Incident",
+          "children": [
+            {
+              "tag": "form",
+              "ref": "editForm",
+              "children": [
+                {
+                  "tag": "input",
+                  "name": "title",
+                  "label": "Title",
+                  "required": true,
+                  "value": {"$bind": "state.currentIncident.title"}
+                },
+                {
+                  "tag": "select",
+                  "name": "severity",
+                  "label": "Severity",
+                  "options": ["low", "medium", "high", "critical"],
+                  "value": {"$bind": "state.currentIncident.severity"}
+                }
+              ]
+            },
+            {
+              "tag": "group",
+              "class": "modal-actions",
+              "children": [
+                {
+                  "tag": "button", 
+                  "text": "Cancel",
+                  "onClick": {"action": "modal", "modal": "edit-form", "close": true}
+                },
+                {
+                  "tag": "button",
+                  "text": "Save",
+                  "variant": "primary",
+                  "onClick": {
+                    "action": "publish",
+                    "topic": "commands.incident.update", 
+                    "payload": {
+                      "id": {"$bind": "state.currentIncident.id"},
+                      "updates": {"$ref": "editForm.getValues"}
+                    },
+                    "then": {"action": "modal", "modal": "edit-form", "close": true}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    "empty": {
+      "type": "view",
+      "name": "empty",
+      "children": [
+        {
+          "type": "group",
+          "class": "empty-state text-center",
+          "children": [
+            {
+              "type": "text",
+              "content": "Select an incident to view details",
+              "tag": "p",
+              "class": "text-muted"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

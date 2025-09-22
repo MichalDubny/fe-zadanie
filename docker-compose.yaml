@@ -1,0 +1,48 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  nats:
+    image: nats:2.10-alpine
+    container_name: nats-server
+    ports:
+      - "4222:4222"    # NATS client port
+      - "8222:8222"    # HTTP monitoring port
+      - "8000:8000"    # WebSocket port
+    volumes:
+      - ./nats.conf:/etc/nats/nats-server.conf
+      - nats-data:/data
+    command: ["-c", "/etc/nats/nats-server.conf"]
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # TODO: Add backend service once implemented
+  # backend:
+  #   build: ./backend
+  #   container_name: backend-service
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NATS_URL=nats://nats:4222
+  #   depends_on:
+  #     - nats
+
+  # Optional: NATS CLI for debugging
+  nats-cli:
+    image: natsio/nats-box:latest
+    container_name: nats-cli
+    depends_on:
+      - nats
+    command: ["sleep", "infinity"]
+    # Usage: docker exec -it nats-cli nats stream ls
+
+volumes:
+  nats-data:
+
+networks:
+  default:
+    name: frontend-assignment

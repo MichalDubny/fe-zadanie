@@ -1,0 +1,153 @@
+{
+  "layout": "splitscreen",
+  "views": {
+    "list": {
+      "tag": "view",
+      "name": "list",
+      "children": [
+        {
+          "tag": "text",
+          "content": "Instructions",
+          "class": "mb-4"
+        },
+        {
+          "tag": "table",
+          "bind": "state.instructions", 
+          "onRowClick": {"action": "showDetail", "id": "{{row.id}}"},
+          "columns": [
+            {"key": "id", "title": "ID", "width": 120},
+            {"key": "title", "title": "Title", "width": 300},
+            {"key": "category", "title": "Category", "width": 150},
+            {"key": "status", "title": "Status", "width": 120}
+          ]
+        }
+      ]
+    },
+
+    "detail": {
+      "tag": "view", 
+      "name": "detail",
+      "children": [
+        {
+          "tag": "group",
+          "class": "header mb-4",
+          "children": [
+            {
+              "tag": "text",
+              "content": {"$bind": "state.currentInstruction.title"}
+            },
+            {
+              "tag": "button",
+              "text": "× Close",
+              "onClick": {"action": "showEmpty"}
+            }
+          ]
+        },
+        {
+          "tag": "group",
+          "class": "meta mb-4",
+          "children": [
+            {
+              "tag": "text",
+              "label": "Category",
+              "content": {"$bind": "state.currentInstruction.category"}
+            },
+            {
+              "tag": "text",
+              "label": "Status",
+              "content": {"$bind": "state.currentInstruction.status"}
+            }
+          ]
+        },
+        {
+          "tag": "text",
+          "content": {"$bind": "state.currentInstruction.content"},
+          "class": "content mb-6"
+        },
+        {
+          "tag": "button", 
+          "text": "Edit",
+          "onClick": {"action": "modal", "modal": "edit-form"}
+        },
+        {
+          "tag": "modal",
+          "name": "edit-form",
+          "title": "Edit Instruction",
+          "children": [
+            {
+              "tag": "form",
+              "ref": "editForm", 
+              "children": [
+                {
+                  "tag": "input",
+                  "name": "title",
+                  "label": "Title",
+                  "required": true,
+                  "value": {"$bind": "state.currentInstruction.title"}
+                },
+                {
+                  "tag": "select",
+                  "name": "category",
+                  "label": "Category",
+                  "options": ["emergency", "maintenance", "security", "general"],
+                  "value": {"$bind": "state.currentInstruction.category"}
+                },
+                {
+                  "tag": "input",
+                  "name": "content",
+                  "label": "Content", 
+                  "type": "textarea",
+                  "rows": 6,
+                  "value": {"$bind": "state.currentInstruction.content"}
+                }
+              ]
+            },
+            {
+              "tag": "group",
+              "class": "modal-actions",
+              "children": [
+                {
+                  "tag": "button", 
+                  "text": "Cancel",
+                  "onClick": {"action": "modal", "modal": "edit-form", "close": true}
+                },
+                {
+                  "tag": "button",
+                  "text": "Save",
+                  "variant": "primary",
+                  "onClick": {
+                    "action": "publish",
+                    "topic": "commands.instruction.update", 
+                    "payload": {
+                      "id": {"$bind": "state.currentInstruction.id"},
+                      "updates": {"$ref": "editForm.getValues"}
+                    },
+                    "then": {"action": "modal", "modal": "edit-form", "close": true}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    "empty": {
+      "tag": "view",
+      "name": "empty",
+      "children": [
+        {
+          "typetag": "group",
+          "class": "empty-state text-center",
+          "children": [
+            {
+              "tag": "text",
+              "content": "Select an instruction to view details",
+              "class": "text-muted"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

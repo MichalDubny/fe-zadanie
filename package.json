@@ -1,0 +1,26 @@
+{
+  "name": "fe-zadanie",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "wscat -c ws://localhost:8000",
+    "server": "ts-node src/server.ts",
+    "client": "ts-node src/example-client.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "nats": "^2.29.3",
+    "nats.ws": "^1.30.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "wscat": "^6.1.0"
+  }
+}
