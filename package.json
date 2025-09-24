@@ -6,7 +6,7 @@
   "scripts": {
     "test": "wscat -c ws://localhost:8000",
     "server": "ts-node src/server.ts",
-    "client": "ts-node src/example-client.ts",
+    "client": "ts-node src/client.ts",
     "clean": "rm -rf dist"
   },
   "keywords": [],

@@ -158,6 +158,13 @@ class SimpleBackend {
     } catch (err: any) {
       console.error('Failed to connect to app-kpis KV:', err.message);
     }
+
+    try {
+      this.definitionsKV = await this.js.views.kv('definitions-data');
+      console.log('Connected to definitions-data KV');
+    } catch (err: any) {
+      console.error('Failed to connect to definitions-data KV:', err.message);
+    }
   }
 
   private async seedData(): Promise<void> {
