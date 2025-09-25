@@ -8,3 +8,12 @@ export interface Incident {
   createdAt?: string;
   updatedAt?: string;
 }
+ 
+export interface Instruction {
+  id: string;
+  title: string;
+  category: string;
+  status: string;
+  content: string;
+  updatedAt?: string;
+}

@@ -1,0 +1,27 @@
+.horizontal-panel {
+  width: 100%;
+  height: 50px;
+  background-color: #e9e3e3;
+  display: flex;
+  align-items: center;
+
+  .panel-item {
+    height: 100%;
+    padding: 0 2rem 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.active {
+      background-color: #d9d9d9;
+      cursor: pointer;
+      height: 100%;
+    }
+
+    &:hover {
+      background-color: #d9d9d9;
+      cursor: pointer;
+      height: 100%;
+    }
+  }
+}

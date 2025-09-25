@@ -1,37 +1,30 @@
-<script setup lang="ts"></script>
-
 <template>
-  <ListView />
+  <RouterView v-if="ncRef" />
+  <div v-else class="flex justify-center align-center h-screen">Loading...</div>
 </template>
 
 <script lang="ts" setup>
-import ListView from '@/views/ListView.vue';
-import { connectNats, loadIncidents, incidentSubscribe } from '@/services/natsService';
+import { connectNats } from '@/services/natsService';
 import { onMounted, onUnmounted, ref } from 'vue';
-import { Incident } from '@/models';
+import type { NatsConnection } from 'nats.ws';
 
-const incidentsRef = ref<Incident[]>([]);
-const unsubscribeRef = ref<(() => void) | null>(null);
-const ncRef = ref<NatsConnection | null>(null);
+const ncRef = ref<NatsConnection | undefined>(undefined);
 
 onMounted(() => {
   connectNats()
-    .then((nc) => {
+    .then((nc: NatsConnection) => {
       ncRef.value = nc;
-      return loadIncidents();
-    })
-    .then((incidents: Incident[]) => {
-      incidentsRef.value = incidents;
-      console.log('Incidents:', incidents); 
-      unsubscribeRef.value = incidentSubscribe(); 
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Nats Error:', error);
     });
 });
 
 onUnmounted(() => {
   if (ncRef.value) ncRef.value.close();
-  if (unsubscribeRef.value) unsubscribeRef.value();
 });
 </script>
+
+<style lang="scss">
+@use './assets/scss/main.scss';
+</style>

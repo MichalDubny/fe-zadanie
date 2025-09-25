@@ -18,21 +18,53 @@ export const connectNats = async () => {
   }
 };
 
-export const loadIncidents = async () => {
+const fechtData = (subject: string) => {
   if (!nc) return;
 
-  console.log('Loading incidents');
   return nc
-    .request('data.get.incidents')
-    .then((incidentsReply) => sc.decode(incidentsReply.data))
+    .request(subject)
+    .then((reply) => JSON.parse(sc.decode(reply.data)))
     .catch((error) => {
       console.error('Error:', error);
       return [];
     });
 };
 
-export const incidentSubscribe = () => {
+export const loadDefinitions = (subject: string) => {
+  return fechtData('definitions.get.' + subject);
+};
+
+export const loadIncidentDefinitions = () => {
+  return fechtData('definitions.get.incidents');
+};
+
+export const loadInstructionDefinitions = () => {
+  return fechtData('definitions.get.instructions');
+};
+
+export const loadIncidents = () => {
+  return fechtData('data.get.incidents');
+};
+
+export const loadInstructions = () => {
+  return fechtData('data.get.instructions');
+};
+
+export const subscribe = (subject: string) => {
   if (!nc) return;
+  const data: any[] = [];
+  return nc.subscribe(subject, {
+    callback: (d: any) => {
+      const i = data.findIndex((x) => x.id === d.id);
+      if (i >= 0) data[i] = d;
+      else data.unshift(d);
+    },
+  });
+};
+
+export const incidentSubscribe = () => {
+  return subscribe('incidents.updated');
+  /* if (!nc) return;
   const incidents: any[] = [];
   return nc.subscribe('incidents.updated', {
     callback: (inc: any) => {
@@ -40,5 +72,9 @@ export const incidentSubscribe = () => {
       if (i >= 0) incidents[i] = inc;
       else incidents.unshift(inc);
     },
-  });
+  });*/
+};
+
+export const instructionSubscribe = () => {
+  return subscribe('instructions.updated');
 };
