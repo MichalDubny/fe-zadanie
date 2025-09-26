@@ -32,8 +32,8 @@ onMounted(() => {
 const initInstructionsData = () => {
   loadInstructionDefinitions()
     ?.then((definitions: any) => {
+      //  console.log('Definitions  :', definitions);
       store.updateDefinitions(definitions);
-      // console.log('Definitions stored:', store.definitions);
       return loadInstructions();
     })
     .then((instructions: any) => {

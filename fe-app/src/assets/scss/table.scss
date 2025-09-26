@@ -1,0 +1,23 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background-color: #f0f0f0;
+}
+
+.table-row {
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+th,
+td {
+  padding: 0.5rem 0rem;
+}

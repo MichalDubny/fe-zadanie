@@ -8,7 +8,7 @@ export interface Incident {
   createdAt?: string;
   updatedAt?: string;
 }
- 
+
 export interface Instruction {
   id: string;
   title: string;

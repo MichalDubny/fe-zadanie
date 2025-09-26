@@ -1,20 +1,33 @@
 import { create } from 'zustand-vue';
 import { type Incident, type Instruction } from '@/models';
 
-export const useIncidents = create((set) => ({
+const getNestedValue = (obj: any, path: string) => {
+  return path.split('.').reduce((current, key) => current?.[key], obj);
+};
+
+export const useIncidents = create((set, get) => ({
   incidents: [] as Incident[],
-  definitions: null,
+  definitions: undefined,
   removeAllIncidents: () => set({ incidents: [] }),
   updateIncidents: (newIncidents: Incident[]) => set({ incidents: newIncidents }),
-  updateDefinitions: (newDefinitions: any) => {
-    set({ definitions: newDefinitions });
+  updateDefinitions: (newDefinitions: any) => set({ definitions: newDefinitions }),
+  currentIncident: undefined,
+  updateCurrentIncident: (incident: Incident) => set({ currentIncident: incident }),
+
+  getValueByKey: (key: string) => {
+    const withoutState = key.replace('state.', '');
+    return getNestedValue(get(), withoutState);
   },
 }));
 
-export const useInstructions = create((set) => ({
+export const useInstructions = create((set, get) => ({
   instructions: [] as Instruction[],
-  definitions: null,
+  definitions: undefined,
   removeAllInstructions: () => set({ instructions: [] }),
   updateInstructions: (newInstructions: Instruction[]) => set({ instructions: newInstructions }),
   updateDefinitions: (newDefinitions: any) => set({ definitions: newDefinitions }),
+  getValueByKey: (key: string) => {
+    const withoutState = key.replace('state.', '');
+    return getNestedValue(get(), withoutState);
+  },
 }));

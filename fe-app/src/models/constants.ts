@@ -9,3 +9,11 @@ export const PAGE = {
         name: 'instructions',
     },
 };
+
+export const TAG = {
+    TABLE: 'table',
+    GROUP: 'group',
+    H1: 'h1',
+    BUTTON: 'button',
+    TEXT: 'text',
+};
