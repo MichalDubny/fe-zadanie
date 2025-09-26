@@ -13,6 +13,13 @@ export const useIncidents = create((set, get) => ({
   updateDefinitions: (newDefinitions: any) => set({ definitions: newDefinitions }),
   currentIncident: undefined,
   updateCurrentIncident: (incident: Incident) => set({ currentIncident: incident }),
+  showEmpty: () => set({ currentIncident: undefined }),
+
+  callFunctionByKey: (key: string) => {
+    const func = getNestedValue(get(), key);
+    if (typeof func === 'function') return func();
+    return null;
+  },
 
   getValueByKey: (key: string) => {
     const withoutState = key.replace('state.', '');

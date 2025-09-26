@@ -5,13 +5,17 @@
       <h1 v-if="child.tag === TAG.H1" :class="child.class">
         <DynamicalText :text="child.content" :state="state" />
       </h1>
-      <button v-if="child.tag === TAG.BUTTON" :class="child.class" @click="child.onClick || null">
+      <button
+        v-if="child.tag === TAG.BUTTON"
+        :class="child.class"
+        @click="state.callFunctionByKey(child.onClick.action)"
+      >
         {{ child.text }}
       </button>
       <div v-if="child.tag === TAG.TEXT" :class="child.class">
         <div v-if="child.label" class="bold">{{ child.label }}</div>
         <p v-if="child.content">
-            {{ state.getValueByKey(child.content.$bind) }}
+          {{ state.getValueByKey(child.content.$bind) }}
         </p>
       </div>
     </div>
@@ -28,5 +32,8 @@ const state: any = useIncidents();
 const props = defineProps<{
   groupDefinition: any;
 }>();
- 
+
+const showEmpty = () => {
+  state.updateCurrentIncident(undefined);
+};
 </script>

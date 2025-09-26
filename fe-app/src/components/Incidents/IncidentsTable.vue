@@ -13,12 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="row in state.incidents"
-          :key="row.id"
-          class="table-row"
-          @click="onRowClick(row)"
-        >
+        <tr v-for="row in state.incidents" :key="row.id" class="table-row" @click="onRowClick(row)">
           <td v-for="column in tableDefinition.columns" :key="column.key">
             {{ row[column.key as keyof Incident] }}
           </td>
@@ -35,8 +30,7 @@ import { useIncidents } from '@/store';
 const state: any = useIncidents();
 
 const onRowClick = (row: Incident) => {
-  state.updateCurrentIncident(row); 
-  console.log(row.id);
+  state.updateCurrentIncident(row);
 };
 
 const props = defineProps<{
